@@ -1,0 +1,217 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>快捷加油</title>
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/weui.css" />
+    <link rel="stylesheet" href="css/all.css" />
+    <style>
+        .page__title{
+            font-size: 30px;
+        }
+        .weui-cell__hd{
+            font-weight: bold;
+            font-size: 22px;
+        }
+        .weui-vcode-btn{
+            border: 0;
+            font-size: 14px;
+        }
+        .weui-grid{
+            width: 25%;
+            font-weight: bolder;
+        }
+        #balance{
+            float:right;
+            font-size: 12px;
+            color: gray;
+        }
+        .weui-cell__bd{
+            font-size: 14px;
+        }
+        .weui-input{
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body ontouchstart>
+    <!-- <div class="weui-toptips weui-toptips_warn js_tooltips">错误提示</div> -->
+    <div class="container" id="container">
+        <div class="page">
+            <div class="page__hd">
+                <h1 class="page__title">汉 口 加 油 站</h1>
+                <p class="page__desc"><i class="weui-icon-info-circle"></i>请勿在油机旁使用手机！</p>
+            </div>
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell weui-cell_vcode">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">油枪：</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="number" pattern="[0-9]*" placeholder="请输入油枪号">
+                    </div>
+                    <div class="weui-cell__ft">
+                        <button class="weui-vcode-btn">92#汽油</button>
+                    </div>
+                </div>
+                <div class="weui-cell weui-cell_vcode">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">金额：</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input id="money" class="weui-input" type="number" minlength="1" maxlength="10000" pattern="[1-10000]*"
+                            placeholder="加油金额（1-10000元）">
+                    </div>
+                    <div class="weui-cell__ft">
+                        <button class="weui-vcode-btn">
+                            <!-- 优惠 ¥0.5/L -->
+                        </button>
+                    </div>
+                </div>
+                <div id="tc" class="weui-grids">
+                    <a href="javascript:;" class="weui-grid">
+
+                        <p class="weui-grid__label"><span>100</span>元</p>
+                    </a>
+                    <a href="javascript:;" class="weui-grid">
+
+                        <p class="weui-grid__label"><span>200</span>元</p>
+                    </a>
+                    <a href="javascript:;" class="weui-grid">
+
+                        <p class="weui-grid__label"><span>300</span>元</p>
+                    </a>
+                    <a href="javascript:;" class="weui-grid">
+
+                        <p class="weui-grid__label"><span>400</span>元</p>
+                    </a>
+                </div>
+                <!-- <div class="weui-cells__title" style="text-align: left">支付方式</div> -->
+                <!-- <div class="weui-cells weui-cells_radio">
+                    <label class="weui-cell weui-check__label" for="x11">
+                        <div class="weui-cell__bd">
+                            <p><span class="fa fa-credit-card-alt"></span> 会员卡支付 <span id="balance">余额：¥15.5</span></p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <input type="radio" class="weui-check" name="radio1" id="x11">
+                            <span class="weui-icon-checked"></span>
+                        </div>
+                    </label>
+                    <label class="weui-cell weui-check__label" for="x12">
+                        <div class="weui-cell__bd">
+                            <p><span class="fa fa-weixin"></span> 微信支付</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <input type="radio" name="radio1" class="weui-check" id="x12" checked="checked">
+                            <span class="weui-icon-checked"></span>
+                        </div>
+                    </label>
+                </div> -->
+                <div id="pay" class="page__bd page__bd_spacing">
+                    <a href="javascript:;" class="weui-btn weui-btn_primary">支付：¥0.00 </a>
+                </div>
+            </div>
+        </div>
+        <div class="weui-footer weui-footer_fixed-bottom">
+            <p class="weui-footer__links">
+                <a href="javascript:home();" class="weui-footer__link">武汉金瑞鑫石油有限公司</a>
+            </p>
+            <p class="weui-footer__text">Copyright © 2008-2020</p>
+        </div>
+        <div id="dialogs">
+            <!--BEGIN dialog2-->
+            <div class="js_dialog" id="iosDialog2" style="display: none;">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__bd">请输入正确的内容！</div>
+                </div>
+            </div>
+            <!--END dialog2-->
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="js/zepto.min.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="https://res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
+
+<script>
+    const h = document.body.scrollHeight // 用onresize事件监控窗口或框架被调整大小，先把一开始的高度记录下来
+    window.onresize = function () { // 如果当前窗口小于一开始记录的窗口高度，那就让当前窗口等于一开始窗口的高度
+        if (document.body.scrollHeight < h) {
+            document.body.style.height = h
+        }
+    }
+
+    $(function () {
+        //点击切换套餐
+        $("#tc a").click(function (e) {
+            money = $(this).find("span").text();
+            // $("#tc a").css("background-color", "#fff");
+            // $("#tc a p").css("color", "#000");
+            // $(this).css("background-color", "#9ED99D");
+            // $(this).find("p").css("color", "#fff");
+            $("#pay a").text('支付：¥ ' + money + '元');
+            $("#money").val(money);
+            $("#tc").hide();
+        })
+
+        $('#money').on('input focus keyup', function (e) {
+            onlyNumber(this);
+            //实时监听金额输入框变化
+            if ($('#money').val()) {
+                //输入框内容不为空
+                money = $('#money').val();
+                $("#pay a").text('支付：¥ ' + money + '元');
+                $("#tc").hide();
+            } else {
+                //输入框内容为空
+                $("#pay a").text('支付：¥ 0元');
+                $("#tc").show();
+            }
+        })
+
+        //验证数字
+        function onlyNumber(obj) {
+            //先把非数字的都替换掉，除了数字和. 
+            obj.value = obj.value.replace(/[^\d\.]/g, '');
+            //必须保证第一个为数字而不是. 
+            obj.value = obj.value.replace(/^\./g, '0.');
+            //保证只有出现一个.而没有多个. 
+            obj.value = obj.value.replace(/\.{2,}/g, '.');
+            //保证.只出现一次，而不能出现两次以上 
+            obj.value = obj.value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
+            //只能输入两个小数
+            obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        }
+
+
+        var $iosDialog2 = $('#iosDialog2');
+
+
+
+        //关闭
+        $('#dialogs').on('click', function () {
+            $('.js_dialog').fadeOut(200);
+        });
+
+
+        $('#pay').on('click', function () {
+            $iosDialog2.fadeIn(200);
+        });
+
+
+
+
+
+
+
+
+
+    });
+</script>

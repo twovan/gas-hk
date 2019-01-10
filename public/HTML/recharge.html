@@ -1,0 +1,136 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>物联网充值</title>
+    <link rel="stylesheet" href="css/weui.css" />
+    <link rel="stylesheet" href="css/all.css" />
+</head>
+
+<body ontouchstart>
+    <div class="weui-toptips weui-toptips_warn js_tooltips">错误提示</div>
+    <div class="container" id="container">
+        <div class="page">
+            <div class="page__hd">
+                <h1 class="page__title">物联网卡充值</h1>
+                <p class="page__desc">玩转流量，玩转物联网！</p>
+            </div>
+            <div class="weui-cell weui-cell_vcode">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <input id="tel" class="weui-input" type="number" placeholder="输入需要充值的号码">
+                    </div>
+                </div>
+            </div>
+            <div id="tc" class="weui-grids">
+                <a href="javascript:;" class="weui-grid">
+                    <div class="weui-grid__icon"> <img src="./images/icon_tabbar.png" alt=""> </div>
+                    <p class="weui-grid__label"><span>15</span>元</p>
+                </a> <a href="javascript:;" class="weui-grid">
+                    <div class="weui-grid__icon"> <img src="./images/icon_tabbar.png" alt=""> </div>
+                    <p class="weui-grid__label"><span>30</span>元</p>
+                </a> <a href="javascript:;" class="weui-grid">
+                    <div class="weui-grid__icon"> <img src="./images/icon_tabbar.png" alt=""> </div>
+                    <p class="weui-grid__label"><span>60</span>元</p>
+                </a> <a href="javascript:;" class="weui-grid">
+                    <div class="weui-grid__icon"> <img src="./images/icon_tabbar.png" alt=""> </div>
+                    <p class="weui-grid__label"><span>90</span>元</p>
+                </a> <a href="javascript:;" class="weui-grid">
+                    <div class="weui-grid__icon"> <img src="./images/icon_tabbar.png" alt=""> </div>
+                    <p class="weui-grid__label"><span>100</span>元</p>
+                </a> <a href="javascript:;" class="weui-grid">
+                    <div class="weui-grid__icon"> <img src="./images/icon_tabbar.png" alt=""> </div>
+                    <p class="weui-grid__label"><span>200</span>元</p>
+                </a> <a href="javascript:;" class="weui-grid">
+                    <div class="weui-grid__icon"> <img src="./images/icon_tabbar.png" alt=""> </div>
+                    <p class="weui-grid__label"><span>300</span>元</p>
+                </a> <a href="javascript:;" class="weui-grid">
+                    <div class="weui-grid__icon"> <img src="./images/icon_tabbar.png" alt=""> </div>
+                    <p class="weui-grid__label"><span>400</span>元</p>
+                </a> <a href="javascript:;" class="weui-grid">
+                    <div class="weui-grid__icon"> <img src="./images/icon_tabbar.png" alt=""> </div>
+                    <p class="weui-grid__label"><span>500</span>元</p>
+                </a>
+            </div>
+
+            <div id="pay" class="page__bd page__bd_spacing"> <a href="javascript:;" class="weui-btn weui-btn_primary">支付：¥ 15元</a> </div>
+            <article class="weui-article">
+                <section style="text-align:left;font-size:12px;color:#808080;">
+                    <h3>说明</h3>
+                    <p>
+                        1. 输入号码必须为11位的数字；<br />
+
+                        2. 流量超出后自动停机，无欠费烦恼；<br />
+
+                        3. 充值成功后20分钟内到账，充值失败自动退款；<br />
+
+                        4. 为了不影响使用，请您错开高峰时段提前充值；<br />
+
+                        5. 若您有任何疑问请联系客服咨询。
+                    </p>
+                </section>
+            </article>
+
+        </div>
+    </div>
+    <div class="weui-footer">
+        <p class="weui-footer__links">
+            <a href="javascript:home();" class="weui-footer__link">物联网充值</a>
+        </p>
+        <p class="weui-footer__text">Copyright © 2008-2016 xxxx.xxx</p>
+    </div>
+</body>
+</html>
+<script src="js/zepto.min.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="https://res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
+<script>
+    var money = '15';//充值金额默认15
+    var tel = '';//充值号码
+    var reg = /[1-9][0-9]{10}|[1-9][0-9]{12}/;//正则表达式11位纯数字
+
+    //点击切换套餐
+    $("#tc a").click(function (e) {
+        money = $(this).find("span").text();
+        $("#tc a").css("background-color", "#fff");
+        $("#tc a p").css("color", "#000");
+        $(this).css("background-color", "#9ED99D");
+        $(this).find("p").css("color", "#fff");
+        $("#pay a").text('支付：¥ ' + money + '元');
+    })
+
+
+
+    $("#pay").click(function () {
+        tel = $("#tel").val();
+        //alert(tel.length);
+        if (reg.test(tel)) {
+            $.ajax({
+                //要用post方式
+                type: "Post",
+                //方法所在页面和方法名
+                url: "index.php?api=api.zgdx_wlw_pay&access_number=" + tel + "&pay_type=ALIPAY&money=" + money,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (j) {
+                    //返回的数据用data.d获取内容
+                    //alert(data.data.url);
+                    if (j.code != 1) {
+                        alert(j.data);
+                    }
+                    else {
+                        window.location.href = j.data.url;
+                    }
+                },
+                error: function (err) {
+                    alert(err);
+                }
+            });
+        } else {
+            alert("您输入的号码有误请核对后再试");
+        };
+
+    })
+</script>
